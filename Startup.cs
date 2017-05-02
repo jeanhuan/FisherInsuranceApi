@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using FisherInsuranceApi.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -33,13 +34,22 @@ namespace FisherInsuranceApi
 
             // Add framework services.
             services.AddMvc();
-        }
 
+            services.AddIdentity<ApplicationUser, IdentityRole>(config => {
+                config.User.RequireUniqueEmail = true;
+                config.Password.RequireNonAlphanumeric = false;
+                config.Cookies.ApplicationCookie.AutomaticChallenge = false;
+            })
+            .AddEntityFrameworkStores<FisherContext>()
+            .AddDefaultTokenProviders();
+
+            }
+        
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-            loggerFactory.AddDebug();
+      //      loggerFactory.AddDebug();
 
             app.UseDefaultFiles();
 
