@@ -97,8 +97,18 @@ namespace FisherInsuranceApi.Security
                         new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                         new Claim(JwtRegisteredClaimNames.Iat, new DateTimeOffset(now)
                                                                     .ToUnixTimeSeconds()
-                                                                    .ToString(), ClaimValueTypes.Integer64)
+                                                                    .ToString(), ClaimValueTypes.Integer64),
+                        new Claim(JwtRegisteredClaimNames.Email, user.Email), 
+                        new Claim(JwtRegisteredClaimNames.GivenName, user.UserName)
                     };
+
+                    var roles = await UserManager.GetRolesAsync(user); 
+                    
+                    foreach (var role in roles) { 
+                        
+                            claims.Add(new Claim(ClaimTypes.Role, role)); 
+                            
+                    }
 
                     //create the actual token
                     var token = new JwtSecurityToken(
